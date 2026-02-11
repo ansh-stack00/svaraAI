@@ -1,20 +1,17 @@
 import { LoginForm } from "@/components/auth/loginForm";
-import { Mic } from "lucide-react";
-import Link from "next/link";
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 p-4">
-      <div className="w-full max-w-md text-center">
-        <Link href="/" className="inline-flex items-center gap-2 mb-6">
-          <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center">
-            <Mic className="w-7 h-7 text-white" />
-          </div>
-        </Link>
+    <div className="relative min-h-screen flex items-center justify-center bg-[#0B0F19] overflow-hidden px-4">
 
-        <h1 className="text-2xl font-bold mb-6">VoiceAgent Platform</h1>
-       <LoginForm />
+      {/* Adding Background Glow Effects */}
+      <div className="absolute w-[600px] h-[600px] bg-violet-600/20 rounded-full blur-3xl -top-40 -left-40" />
+      <div className="absolute w-[500px] h-[500px] bg-cyan-400/20 rounded-full blur-3xl -bottom-40 -right-40" />
+
+      <div className="relative w-full max-w-md text-center space-y-6">
+
+        <LoginForm />
       </div>
     </div>
-  );
+  )
 }
