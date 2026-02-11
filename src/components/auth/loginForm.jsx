@@ -60,7 +60,7 @@ export const LoginForm = () => {
 
         <p className="mt-4 text-sm text-center">
           Don’t have an account?{" "}
-          <Link href="/register" className="text-blue-600 underline">
+          <Link href="/signup" className="text-blue-600 underline">
             Sign up
           </Link>
         </p>
