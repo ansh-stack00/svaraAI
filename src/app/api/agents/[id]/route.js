@@ -3,16 +3,16 @@ import { createClient } from "@/lib/supabase/server";
 
 
 // api to get agent by id 
-export async function GET() {
+export async function GET(request, context) {
     try {
-        const supabase = createClient(request , {params})
+        const supabase = await createClient();
 
         const { data: {user} } = await supabase.auth.getUser()
         if( !user){
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const { id } = await params
+        const { id } = await context.params
         if(!id){
             return NextResponse.json({ error: "Missing agent id" }, { status: 400 });
         }
@@ -39,10 +39,10 @@ export async function GET() {
 
 // api to update agent 
 
-export async function PUT(request , {params}){
+export async function PUT(request , context){
     try{
 
-        const supabase = createClient()
+        const supabase = await createClient()
 
         const { data: {user}}= await supabase.auth.getUser()
         if(!user){
@@ -56,7 +56,7 @@ export async function PUT(request , {params}){
             )
         }
 
-        const { id } = params
+        const { id } = context.params
         if(!id){
             return NextResponse.json({ error: "Missing agent id" }, { status: 400 });
         }
@@ -95,17 +95,17 @@ export async function PUT(request , {params}){
 
 // api to delete agent 
 
-export async function DELETE(request , {params}){
+export async function DELETE( _ , context){
     try {
 
-        const supabase = createClient()
+        const supabase = await createClient()
         const { data: {user}}= await supabase.auth.getUser()
 
         if(!user){
             return NextResponse.json({ error: "Unauthorized"} , { status: 401 })
         }
 
-        const { id } = params;
+        const { id } = await context.params;
         if(!id){
             return NextResponse.json({ error: "Missing agent id" }, { status: 400 });
         }
@@ -117,9 +117,9 @@ export async function DELETE(request , {params}){
             .eq("user_id", user.id)
             
 
-        if(error || !agent){
-            return NextResponse.json({ error: "Failed to delete agent" }, { status: 500 });
-        }
+        // if(error || !agent){
+        //     return NextResponse.json({ error: "Failed to delete agent" }, { status: 500 });
+        // }
 
         return NextResponse.json({ success: true });
 

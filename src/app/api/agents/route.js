@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 // api to fetch agents created by the logged in user
 export async function GET() {
     try {
-        const supabase = createClient()
+        const supabase = await createClient()
 
         // fetching logged in user details from supabase 
         const { data: {user} , error: authError} = await supabase.auth.getUser()
@@ -42,7 +42,7 @@ export async function GET() {
 export async function POST(request) {
 
     try {
-        const supabase = createClient()
+        const supabase = await createClient()
 
         const { data: {user} , error: authError} = await supabase.auth.getUser()
         if(authError || !user){
@@ -72,6 +72,8 @@ export async function POST(request) {
             if(error){
                 return NextResponse.json({ error: "Failed to create agent" }, { status: 500 });
             }
+
+            return NextResponse.json({ agent } , { status: 201 });
 
     } catch (error) {
         console.error("Error creating agent:", error);
