@@ -89,7 +89,7 @@ export default function AgentsPage() {
                   <Sparkles className="w-6 h-6 text-accent" />
                 </div>
               </div>
-              <h1 className="text-4xl sm:text-5xl font-bold text-foreground mb-2">
+              <h1 className="text-4xl sm:text-5xl font-bold text-gray-100 mb-2">
                 Your Agents
               </h1>
               <p className="text-lg text-muted-foreground">

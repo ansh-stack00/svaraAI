@@ -1,12 +1,17 @@
-import pdf from 'pdf-parse';
-
 export async function extractTextFromPDF(buffer) {
+  if (!Buffer.isBuffer(buffer)) {
+    throw new Error("Invalid PDF buffer");
+  }
 
-    const data = await pdf(buffer)
-    const pages = data.text.split('\f');
+  // Use require instead of import
+  const pdfParse = require("pdf-parse");
 
-    pages.map((page , index) => ({
-        pageNumber: index + 1,
-        text: page.trim()
-    }))
+  const data = await pdfParse(buffer);
+
+  return data.text
+    .split("\f")
+    .map((page, index) => ({
+      pageNumber: index + 1,
+      text: page.trim(),
+    }));
 }
