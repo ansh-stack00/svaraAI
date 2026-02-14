@@ -56,7 +56,7 @@ export async function PUT(request , context){
             )
         }
 
-        const { id } = context.params
+        const { id } = await context.params
         if(!id){
             return NextResponse.json({ error: "Missing agent id" }, { status: 400 });
         }
