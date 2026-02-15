@@ -22,9 +22,11 @@
     "next": "16.1.6",
     "openai": "^6.21.0",
     "pdf-parse": "^1.1.1",
+    "pdf-parse-debugging-disabled": "^1.1.1",
     "radix-ui": "^1.4.3",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-markdown": "^10.1.0",
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {

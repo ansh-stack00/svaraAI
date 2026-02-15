@@ -1,12 +1,12 @@
 export async function extractTextFromPDF(buffer) {
-  if (!Buffer.isBuffer(buffer)) {
-    throw new Error("Invalid PDF buffer");
-  }
+  const pdfParse = require('pdf-parse-debugging-disabled');
 
-  // Use require instead of import
-  const pdfParse = require("pdf-parse");
+  // Force real Node buffer
+  const nodeBuffer = Buffer.isBuffer(buffer)
+    ? buffer
+    : Buffer.from(buffer);
 
-  const data = await pdfParse(buffer);
+  const data = await pdfParse(nodeBuffer);
 
   return data.text
     .split("\f")

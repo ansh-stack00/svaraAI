@@ -137,15 +137,17 @@ export function AgentCard({
           </Link>
 
           {/* Call Button */}
-          {onCall && (
+     {/* onCall && */}     {( 
+          <Link href={`/dashboard/agents/${agent.id}/chat`}>
             <Button
               size="sm"
-              onClick={() => onCall(agent.id)}
+              // onClick={() => onCall(agent.id)}
               className="gap-2 bg-green-600 hover:bg-green-700 text-white"
             >
               <Phone className="w-3 h-3" />
-              Call
+              Chat
             </Button>
+          </Link>
           )}
         </div>
       </div>

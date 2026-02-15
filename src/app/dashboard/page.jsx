@@ -20,19 +20,19 @@ export default async function DashboardPage() {
 
   if (!user) return null;
 
-  // Fetch Agents
+  // Fetching Agents
   const { data: agents = [], count: agentCount } = await supabase
     .from("agents")
     .select("*", { count: "exact" })
     .eq("user_id", user.id);
 
-  // Fetch Calls
+  // Fetching Calls
   const { data: calls = [], count: callCount } = await supabase
     .from("calls")
     .select("*", { count: "exact" })
     .eq("user_id", user.id);
 
-  // Calculate stats
+  // Calculating stats
   const totalDuration = calls.reduce(
     (sum, call) => sum + (call.duration || 0),
     0
@@ -50,7 +50,7 @@ export default async function DashboardPage() {
       )
     : 0;
 
-  // Recent Calls (fixed join + user filter)
+  // Recent Calls 
   const { data: recentCalls = [] } = await supabase
     .from("calls")
     .select("*, agents(name)")
@@ -73,7 +73,7 @@ export default async function DashboardPage() {
             </p>
           </div>
 
-          {/* Fixed link */}
+          
           <Link href="/dashboard/agents">
             <Button className="gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-blue-500/50">
               <Plus className="w-5 h-5" />

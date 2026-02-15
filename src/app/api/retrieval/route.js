@@ -1,22 +1,31 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-// import embedder
 import { generateEmbedding } from "@/lib/embedding";
 
 export async function POST(request) {
-    const supabase = await createClient()
+  const supabase = await createClient();
 
-    const { data: {user} } = await supabase.auth.getUser()
-    if(!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { agent_id , query } = await request.json()
-    const embedding = await generateEmbedding(query)
+  const { agent_id, query } = await request.json();
 
-    const { data } = (await supabase).rpc("search_knowledge_chunks" , {
-        query_embedding: embedding,
-        match_agent_id: agent_id,
-        match_limit: 5
-    }) 
+  if (!agent_id || !query) {
+    return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+  }
 
-    return NextResponse.json({ results: data })
+  const embedding = await generateEmbedding(query);
+
+  const { data, error } = await supabase.rpc("search_knowledge_chunks", {
+    query_embedding: embedding,
+    match_agent_id: agent_id,
+    match_limit: 5,
+  });
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ results: data });
 }

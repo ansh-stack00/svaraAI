@@ -42,10 +42,11 @@ export async function POST(request) {
     }
 
     const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+    const buffer = Buffer.from(new Uint8Array(arrayBuffer));;
 
     const pages = await extractTextFromPDF(buffer);
     fullText = pages.map((page) => page.text).join("\n");
+    console.log("fulltext" , fullText)
     metadata.total_pages = pages.length;
 }
 
@@ -70,21 +71,27 @@ export async function POST(request) {
   }
 
   const docs = await chunkText(fullText, { source_id: source.id });
+  console.log("text is chunked ", docs.length)
 
   for (const doc of docs) {
     const embedding = await generateEmbedding(doc.pageContent);
 
-    await supabase.from("knowledge_chunks").insert({
-      source_id: source.id,
-      agent_id,
-      content: doc.pageContent,
-      metadata: doc.metadata,
-      token_count: Math.ceil(doc.pageContent.length / 4),
-      embedding,
-    });
-  }
+    const { error: chunkError, data } = await supabase
+      .from("knowledge_chunks")
+      .insert({
+        source_id: source.id,
+        agent_id,
+        content: doc.pageContent,
+        metadata: doc.metadata,
+        token_count: Math.ceil(doc.pageContent.length / 4),
+        embedding,
+      })
+      .select();
 
-  return NextResponse.json({ success: true });
+      if (chunkError) console.error("Chunk insert error:", chunkError);
+      else console.log("Chunk inserted:", data);
+    }
+    return NextResponse.json({ success: true });
 }
 
 export async function GET(request) {
