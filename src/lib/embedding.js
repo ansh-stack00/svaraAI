@@ -13,7 +13,7 @@ export async function generateEmbedding(text) {
     },
   });
 
-  console.log("generating embedding for text: ", text.substring(0, 100))
+  console.log("generating embedding for text ")
 
   return result.embedding.values;
 }

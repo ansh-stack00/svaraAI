@@ -24,7 +24,7 @@ export function ChatWindow({ messages }) {
     });
 
   return (
-    <div className="flex flex-col h-[500px] rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden">
+    <div className="flex flex-col flex-1 overflow-auto rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden">
 
       {/* Header */}
       <div className="sticky top-0 z-10 px-6 py-4 bg-white/80 backdrop-blur-md border-b border-slate-100 flex items-center justify-between">
@@ -45,7 +45,7 @@ export function ChatWindow({ messages }) {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 bg-gradient-to-b from-white to-slate-50">
+      <div className="flex-1  px-6 py-6 space-y-6 bg-gradient-to-b from-white to-slate-50">
 
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center gap-4">

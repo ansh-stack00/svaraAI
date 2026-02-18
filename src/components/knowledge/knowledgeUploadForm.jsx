@@ -34,7 +34,7 @@ export function KnowledgeUploadForm({ agentId, onSuccess, onCancel }) {
 
       const res = await fetch("/api/knowledge", {
         method: "POST",
-        body: data,
+        body:data
       });
 
       if (!res.ok) throw new Error("Upload failed");

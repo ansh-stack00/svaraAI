@@ -11,6 +11,7 @@ import {
   Phone,
   MoreVertical,
   Brain,
+  MessageSquareText
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
@@ -60,6 +61,9 @@ export function AgentCard({
                 {agent.description}
               </p>
             )}
+          </div>
+            <div className="text-xs text-slate-500 p-2">
+              Created {formatDate(agent.created_at)}
           </div>
         </div>
 
@@ -117,10 +121,8 @@ export function AgentCard({
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between pt-4 border-t border-slate-700">
-        <div className="text-xs text-slate-500">
-          Created {formatDate(agent.created_at)}
-        </div>
+      <div className="flex items-center justify-between pt-4 border-t border-slate-700  ">
+        
 
         <div className="flex gap-2">
 
@@ -138,19 +140,31 @@ export function AgentCard({
 
           {/* Call Button */}
      {/* onCall && */}     {( 
-          <Link href={`/dashboard/agents/${agent.id}/chat`}>
+          <Link href={`/dashboard/agents/${agent.id}/call`}>
             <Button
               size="sm"
               // onClick={() => onCall(agent.id)}
               className="gap-2 bg-green-600 hover:bg-green-700 text-white"
             >
               <Phone className="w-3 h-3" />
-              Chat
+              Call
             </Button>
           </Link>
           )}
+          <Link href={`/dashboard/agents/${agent.id}/chat`}>
+            <Button
+              size="sm"
+              // onClick={() => onCall(agent.id)}
+              className="gap-2 bg-blue-400 hover:bg-blue-700 text-white"
+            >
+              <MessageSquareText className="w-3 h-3" />
+              Call
+            </Button>
+          </Link>
         </div>
+        
       </div>
+      
     </Card>
   );
 }

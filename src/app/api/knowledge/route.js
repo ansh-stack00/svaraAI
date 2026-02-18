@@ -18,6 +18,13 @@ export async function POST(request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  if (!request.headers.get("content-type")?.includes("multipart/form-data")) {
+    return NextResponse.json(
+      { error: "Invalid content type. Expected multipart/form-data." },
+      { status: 400 }
+    );
+  }
+
   const formData = await request.formData();
 
   const agent_id = formData.get("agent_id");
@@ -46,7 +53,7 @@ export async function POST(request) {
 
     const pages = await extractTextFromPDF(buffer);
     fullText = pages.map((page) => page.text).join("\n");
-    console.log("fulltext" , fullText)
+    // console.log("fulltext" , fullText)
     metadata.total_pages = pages.length;
 }
 
