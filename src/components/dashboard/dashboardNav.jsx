@@ -9,7 +9,7 @@ import { logout } from "@/app/(auth)/actions";
 const navItems = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/dashboard/agents", label: "Agents", icon: Bot },
-  { href: "/dashboard/calls", label: "Call History", icon: Phone },
+  { href: "/dashboard/history", label: "Call History", icon: Phone },
   { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
 ];
 

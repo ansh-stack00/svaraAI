@@ -158,7 +158,7 @@ export function AgentCard({
               className="gap-2 bg-blue-400 hover:bg-blue-700 text-white"
             >
               <MessageSquareText className="w-3 h-3" />
-              Call
+              chat
             </Button>
           </Link>
         </div>

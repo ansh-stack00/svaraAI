@@ -95,7 +95,7 @@ export default async function DashboardPage() {
             />
           </Link>
 
-          <Link href="/dashboard/calls" className="cursor-pointer">
+          <Link href="/dashboard/history" className="cursor-pointer">
             <StatCard
               title="Total Calls"
               value={callCount || 0}
@@ -105,7 +105,7 @@ export default async function DashboardPage() {
             />
           </Link>
 
-          <Link href="/dashboard/calls" className="cursor-pointer">
+          <Link href="/dashboard/history" className="cursor-pointer">
             <StatCard
               title="Avg Duration"
               value={`${avgDuration}s`}

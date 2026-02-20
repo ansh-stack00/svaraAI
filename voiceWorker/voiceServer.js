@@ -408,6 +408,7 @@ async function streamTTS(text, voiceId, audioSource, state, genId, turnStart, se
           text,
           model_id: "eleven_flash_v2_5",
           optimize_streaming_latency: 4,
+          output_format: "mp3_22050_32"
         }),
       }
     )

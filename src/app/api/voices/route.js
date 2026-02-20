@@ -5,6 +5,7 @@ export async function GET() {
     try {
 
         const apiKey = process.env.ELEVENLABS_API_KEY;
+        if(apiKey ) console.log("found key")
 
         if(!apiKey){
             return NextResponse.json({ error: "API key not found" }, { status: 500 });

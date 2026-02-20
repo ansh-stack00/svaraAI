@@ -22,7 +22,7 @@ export async function GET(request , context) {
 
         const { data:call , error:callError } = await supabase 
             .from("calls")
-            .select('*')
+            .select('*,agents(name)')
             .eq("id" , id)
             .eq("user_id" , user.id)
             .single()

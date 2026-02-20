@@ -17,26 +17,24 @@ export async function GET(request) {
         console.log("User ID:", user.id)
 
         const { searchParams } = new URL(request.url)
-        const agentId = searchParams.get("agent_id")
+        // const agentId = searchParams.get("agent_id")
         const limit = parseInt(searchParams.get('limit') || '50');
         const offset = parseInt(searchParams.get('offset') || '0');
-        if(!agentId){
-            console.log("Missing sagent Id ", agentId)
-            return NextResponse.json({ error: "Missing agent id" } , { status: 400 })
-        }
+        // if(!agentId){
+        //     console.log("Missing sagent Id ", agentId)
+        //     return NextResponse.json({ error: "Missing agent id" } , { status: 400 })
+        // }
 
 
         const { data: calls, error } = await  supabase
         .from('calls')
-        .select(`*`)
+        .select(`*, agents(id, name)`)
         .eq('user_id', user.id)
-        .eq('agent_id', agentId)
         .order('started_at', { ascending: false })
         .range(offset, offset + limit - 1)
 
         
         console.log("User ID:", user.id);
-        console.log("Agent ID:", agentId);
         console.log("Calls:", calls);
         console.log("Error:", error);
 

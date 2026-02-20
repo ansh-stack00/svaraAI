@@ -43,7 +43,7 @@ export async function GET(_ , context) {
             .select('*')
             .eq("call_id" , id)
             .eq("user_id" , user.id)
-            .order("created_at" , { ascending: false })
+            .order("sequence_number" , { ascending: true })
 
         console.log(transcript[0])
     

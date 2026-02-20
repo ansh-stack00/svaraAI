@@ -17,3 +17,4 @@ export async function generateEmbedding(text) {
 
   return result.embedding.values;
 }
+
