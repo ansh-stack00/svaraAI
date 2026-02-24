@@ -7,14 +7,18 @@ import { AgentForm } from "@/components/agents/agentForm";
 import { AgentCard } from "@/components/agents/agentCard";
 import { Plus, Search, Loader2, Bot, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
 
 export default function AgentsPage() {
+
   const [agents, setAgents] = useState([]);
   const [filteredAgents, setFilteredAgents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [editingAgent, setEditingAgent] = useState(null);
+  
+
+  const router = useRouter()
 
   useEffect(() => {
     fetchAgents();
@@ -51,6 +55,12 @@ export default function AgentsPage() {
     }
   }
 
+  function handleFormSuccess() {
+    setEditingAgent(null)
+    fetchAgents()
+
+  }
+
   async function handleDeleteAgent(agentId) {
     try {
       const response = await fetch(`/api/agents/${agentId}`, {
@@ -70,11 +80,7 @@ export default function AgentsPage() {
     setEditingAgent(agent);
   }
 
-  function handleFormSuccess() {
-    setShowCreateDialog(false);
-    setEditingAgent(null);
-    fetchAgents();
-  }
+
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -98,7 +104,7 @@ export default function AgentsPage() {
             </div>
 
             <Button 
-              onClick={() => setShowCreateDialog(true)} 
+              onClick={() => router.push("/dashboard/agents/library")} 
               className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground font-semibold h-12 px-6 rounded-lg"
             >
               <Plus className="w-5 h-5" />
@@ -174,19 +180,6 @@ export default function AgentsPage() {
         )}
       </div>
 
-      {/* Create Dialog */}
-      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent className="bg-card border-border/50">
-          <DialogHeader>
-            <DialogTitle className="text-foreground">Create New Agent</DialogTitle>
-          </DialogHeader>
-          <AgentForm
-            onSuccess={handleFormSuccess}
-            onCancel={() => setShowCreateDialog(false)}
-          />
-        </DialogContent>
-      </Dialog>
-
       {/* Edit Dialog */}
       <Dialog open={!!editingAgent} onOpenChange={() => setEditingAgent(null)}>
         <DialogContent className="bg-card border-border/50">
@@ -203,5 +196,5 @@ export default function AgentsPage() {
         </DialogContent>
       </Dialog>
     </main>
-  );
+  )
 }

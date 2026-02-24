@@ -20,6 +20,7 @@ const OpenAI = require("openai")
 const { spawn } = require("child_process")
 const { Readable } = require("stream")
 const ffmpegInstaller = require("@ffmpeg-installer/ffmpeg")
+const { buildRAGPrompt } = require("./providers/rag")
 
 process.on("uncaughtException", (err) => {
   if (
@@ -233,16 +234,20 @@ wss.on("connection", async (ws, req) => {
         state.sequenceNumber++
         const userSeq = state.sequenceNumber
 
-        supabase.from("transcripts").insert({
+        const { error: userInsertError } = await supabase
+        .from("transcripts")
+        .insert({
           call_id: callId,
           user_id: userId,
           speaker: "user",
           text,
           is_final: true,
           sequence_number: userSeq,
-        }).then(({ error }) => {
-          if (error) console.error("User transcript DB error:", error)
         })
+
+      if (userInsertError) {
+        console.error("User transcript DB error:", userInsertError)
+      }
 
         if (state.isSpeaking || ttsQueue !== Promise.resolve()) {
           console.log("BARGE-IN - cancelling current speech")
@@ -256,10 +261,14 @@ wss.on("connection", async (ws, req) => {
         ttsQueue = Promise.resolve()
 
         const llmStart = Date.now()
+        const finalSystemPrompt = await buildRAGPrompt(
+          agent,
+          text
+        )
         const stream = await openai.chat.completions.create({
           model: "llama-3.1-8b-instant",
           messages: [
-            { role: "system", content: agent.system_prompt },
+            { role: "system", content: finalSystemPrompt },
             { role: "user", content: text },
           ],
           max_tokens: 150,
@@ -349,16 +358,20 @@ wss.on("connection", async (ws, req) => {
         state.sequenceNumber++
         const agentSeq = state.sequenceNumber
 
-        supabase.from("transcripts").insert({
+        const { error: agentInsertError } = await supabase
+        .from("transcripts")
+        .insert({
           call_id: callId,
           user_id: userId,
           speaker: "agent",
           text: fullResponse,
           is_final: true,
           sequence_number: agentSeq,
-        }).then(({ error }) => {
-          if (error) console.error("Agent transcript DB error:", error)
         })
+
+      if (agentInsertError) {
+        console.error("Agent transcript DB error:", agentInsertError)
+      }
 
       } catch (err) {
         console.error("Transcript handler error:", err)
