@@ -10,13 +10,13 @@ export async function POST(request) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
      
-    const { agentId, query } = await request.json()
-    if (!agentId || !query) {
-        console.log("Missing agentId or query", { agentId, query })
-        return NextResponse.json({ error: "Missing agentId or query" } , { status: 400 })
+    const { agentId, conversationId, query } = await request.json()
+    if (!agentId || !conversationId || !query) {
+        console.log("Missing agentId or conversationId or query", { agentId, conversationId, query })
+        return NextResponse.json({ error: "Missing agentId or conversationId or query" } , { status: 400 })
     }
 
-    const response = await queryRAG(agentId, query)
+    const response = await queryRAG(agentId, conversationId, query)
     console.log("RAG Response:", response)
 
     return NextResponse.json({ response })

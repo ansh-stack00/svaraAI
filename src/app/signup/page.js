@@ -1,6 +1,5 @@
 import { RegisterForm } from "@/components/auth/regsiterForm";
-import { Mic } from "lucide-react";
-import Link from "next/link";
+
 
 export default function RegisterPage() {
   return (

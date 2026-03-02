@@ -165,54 +165,11 @@ voice-agent-platform/
 ##  Architecture
 
 ### System Overview
-
-```
-┌─────────────────────────────────────────────────────┐
-│                   User Interface                    │
-│            (Next.js 14 + React + Tailwind)         │
-└─────────────────┬───────────────────────────────────┘
-                  │
-┌─────────────────┴───────────────────────────────────┐
-│                  API Routes                         │
-│     /api/agents  /api/knowledge  /api/calls        │
-└─────────────────┬───────────────────────────────────┘
-                  │
-┌─────────────────┴───────────────────────────────────┐
-│              Supabase (PostgreSQL)                  │
-│    agents | calls | transcripts | knowledge         │
-│              + pgvector extension                   │
-└─────────────────┬───────────────────────────────────┘
-                  │
-┌─────────────────┴───────────────────────────────────┐
-│            Voice Pipeline (WebSocket)               │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐           │
-│  │ Deepgram │→│   Groq   │→│ElevenLabs│           │
-│  │   STT    │ │   LLM    │ │   TTS    │           │
-│  └──────────┘ └──────────┘ └──────────┘           │
-└─────────────────────────────────────────────────────┘
-```
+![](./Architecture.png)
 
 ### Voice Pipeline Flow
 
-```
-User Speaks
-    ↓
-[LiveKit] Captures audio (50ms)
-    ↓
-[WebSocket] Streams to server (50ms)
-    ↓
-[Deepgram] Real-time STT (150ms)
-    ↓
-[RAG] Retrieve knowledge (100ms)
-    ↓
-[Groq] Generate response (600ms)
-    ↓
-[ElevenLabs] Text-to-speech (400ms)
-    ↓
-[WebSocket] Stream audio back (200ms)
-    ↓
-User Hears Response (~1.5s total)
-```
+![](./voicePipeline.png)
 
 ### Database Schema
 

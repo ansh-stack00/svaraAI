@@ -2,31 +2,83 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { ChatWindow } from "@/components/chat/chatWindow";
 import { ChatInput } from "@/components/chat/chatInput";
 
 export default function ChatPage() {
   const params = useParams();
   const agentId = params.id;
+
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [conversationId, setConversationId] = useState(null);
+
   const bottomRef = useRef(null);
 
+ 
+  useEffect(() => {
+    if (!agentId) return;
+
+    async function createConversation() {
+      try {
+        const res = await fetch("/api/conversation", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ agentId }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          console.error("Failed to create conversation", data);
+          return;
+        }
+
+        setConversationId(data.conversationId);
+      } catch (err) {
+        console.error("Conversation creation error:", err);
+      }
+    }
+
+    createConversation();
+  }, [agentId]);
+
   async function sendMessage(text) {
-    const newMessage = { role: "user", content: text };
-    setMessages(prev => [...prev, newMessage]);
+    if (!conversationId || loading) return;
+
+    const userMessage = { role: "user", content: text };
+    setMessages(prev => [...prev, userMessage]);
     setLoading(true);
 
-    const res = await fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ agentId, query: text }),
-    });
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          agentId,
+          conversationId,   
+          query: text,
+        }),
+      });
 
-    const data = await res.json();
-    setMessages(prev => [...prev, { role: "assistant", content: data.response }]);
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error("Chat error:", data);
+        setLoading(false);
+        return;
+      }
+
+      setMessages(prev => [
+        ...prev,
+        { role: "assistant", content: data.response },
+      ]);
+    } catch (err) {
+      console.error("Send message error:", err);
+    }
+
     setLoading(false);
   }
+
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -60,27 +112,28 @@ export default function ChatPage() {
           padding: "16px 20px",
           borderBottom: "1px solid #f0f0ee",
           display: "flex",
-          alignItems: "center",
           justifyContent: "space-between",
-          background: "#fff"
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{
-              width: 34, height: 34, borderRadius: 10,
+              width: 34,
+              height: 34,
+              borderRadius: 10,
               background: "#1a1a1a",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 16
-            }}>🤖</div>
-            <div>
-              <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: "#1a1a1a" }}>AI Assistant</p>
-              <p style={{ margin: 0, fontSize: 11, color: "#aaa" }}>Ask anything and get instant responses</p>
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}>
+              🤖
             </div>
-          </div>
-
-          {/* Online indicator */}
-          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#aaa" }}>
-            <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e", display: "inline-block" }} />
-            Online
+            <div>
+              <p style={{ margin: 0, fontSize: 14, fontWeight: 600 }}>
+                AI Assistant
+              </p>
+              <p style={{ margin: 0, fontSize: 11, color: "#aaa" }}>
+                Ask anything and get instant responses
+              </p>
+            </div>
           </div>
         </div>
 
@@ -95,95 +148,73 @@ export default function ChatPage() {
         }}>
           {messages.length === 0 && (
             <div style={{
-              display: "flex", alignItems: "center", justifyContent: "center",
-              height: "100%", flexDirection: "column", gap: 10
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100%",
+              flexDirection: "column",
+              gap: 10
             }}>
               <span style={{ fontSize: 36 }}>👋</span>
-              <p style={{ color: "#bbb", fontSize: 13, margin: 0 }}>Start a conversation</p>
+              <p style={{ color: "#bbb", fontSize: 13 }}>
+                {conversationId ? "Start a conversation" : "Initializing chat..."}
+              </p>
             </div>
           )}
 
           {messages.map((msg, i) => {
             const isUser = msg.role === "user";
+
             return (
               <div key={i} style={{
                 display: "flex",
                 flexDirection: isUser ? "row-reverse" : "row",
-                alignItems: "flex-start",
                 gap: 10
               }}>
-                {/* Avatar */}
                 <div style={{
-                  width: 30, height: 30, borderRadius: "50%", flexShrink: 0,
+                  width: 30,
+                  height: 30,
+                  borderRadius: "50%",
                   background: isUser ? "#6366f1" : "#1a1a1a",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 13
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}>
                   {isUser ? "👤" : "🤖"}
                 </div>
 
-                {/* Bubble */}
-                <div style={{ maxWidth: "72%" }}>
-                  <p style={{
-                    fontSize: 11, color: "#aaa", marginBottom: 4,
-                    textAlign: isUser ? "right" : "left"
-                  }}>
-                    {isUser ? "You" : "Assistant"}
-                  </p>
-                  <div style={{
-                    background: isUser ? "#1a1a1a" : "#f4f4f2",
-                    color: isUser ? "#fff" : "#1a1a1a",
-                    padding: "10px 14px",
-                    borderRadius: isUser ? "12px 4px 12px 12px" : "4px 12px 12px 12px",
-                    fontSize: 13, lineHeight: 1.65
-                  }}>
-                    {msg.content}
-                  </div>
+                <div style={{
+                  background: isUser ? "#1a1a1a" : "#f4f4f2",
+                  color: isUser ? "#fff" : "#1a1a1a",
+                  padding: "10px 14px",
+                  borderRadius: 12,
+                  maxWidth: "70%"
+                }}>
+                  {msg.content}
                 </div>
               </div>
             );
           })}
 
-          {/* Typing indicator */}
           {loading && (
-            <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
-              <div style={{
-                width: 30, height: 30, borderRadius: "50%",
-                background: "#1a1a1a",
-                display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13
-              }}>🤖</div>
-              <div style={{
-                background: "#f4f4f2", padding: "10px 16px",
-                borderRadius: "4px 12px 12px 12px", display: "flex", gap: 4, alignItems: "center"
-              }}>
-                {[0, 1, 2].map(n => (
-                  <span key={n} style={{
-                    width: 6, height: 6, borderRadius: "50%", background: "#aaa",
-                    display: "inline-block",
-                    animation: "bounce 1.2s infinite",
-                    animationDelay: `${n * 0.2}s`
-                  }} />
-                ))}
-              </div>
-            </div>
+            <div>🤖 Typing...</div>
           )}
 
           <div ref={bottomRef} />
         </div>
 
         {/* Input */}
-        <div style={{ borderTop: "1px solid #f0f0ee", padding: "14px 16px", background: "#fff" }}>
-          <ChatInput onSend={sendMessage} disabled={loading} />
+        <div style={{
+          borderTop: "1px solid #f0f0ee",
+          padding: "14px 16px"
+        }}>
+          <ChatInput
+            onSend={sendMessage}
+            disabled={loading || !conversationId}  
+          />
         </div>
 
       </div>
-
-      <style>{`
-        @keyframes bounce {
-          0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
-          40% { transform: translateY(-5px); opacity: 1; }
-        }
-      `}</style>
     </div>
   );
 }
