@@ -1,5 +1,5 @@
 const { createClient } = require('@supabase/supabase-js')
-const{ generateEmbedding } = require('../../src/lib/embedding')
+const{ generateEmbedding } = require('./embedding')
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,

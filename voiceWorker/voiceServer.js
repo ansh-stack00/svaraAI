@@ -518,6 +518,6 @@ async function streamTTS(text, voiceId, audioSource, state, genId, turnStart, se
   console.log("TTS complete:", Date.now() - ttsStart, "ms")
 }
 
-server.listen(8080, () => {
-  console.log("Voice WebRTC Server running on port 8080")
+server.listen(process.env.PORT || 8080, () => {
+  console.log("Voice WebRTC Server running on port " + (process.env.PORT || 8080))
 })
