@@ -95,13 +95,13 @@ export default function CallHistoryPage() {
         }}>
             <div style={{ display: "flex", gap: 8 }}>
             {/* Quick Filters */}
-            <button style={toolbarBtn}>
+            {/* <button style={toolbarBtn}>
                 <span style={{ marginRight: 6 }}>⚡</span> Quick Filters
                 <span style={{ marginLeft: 6, opacity: 0.5 }}>▾</span>
             </button>
             <button style={toolbarBtn}>
                 <span style={{ marginRight: 6 }}>⇅</span> Load Filters
-            </button>
+            </button> */}
 
             {/* Status pills */}
             {["all", "completed", "failed", "in_progress"].map(s => (
@@ -128,9 +128,9 @@ export default function CallHistoryPage() {
                 fontFamily: "inherit", color: "#1a1a1a"
                 }}
             />
-            <button style={{ ...toolbarBtn, background: "#1a1a1a", color: "#fff", border: "1px solid #1a1a1a" }}>
+            {/* <button style={{ ...toolbarBtn, background: "#1a1a1a", color: "#fff", border: "1px solid #1a1a1a" }}>
                 + Add filter
-            </button>
+            </button> */}
             </div>
         </div>
 
